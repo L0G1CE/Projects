@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SpellRace - Start</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #start-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    #start-button {
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      background-color: #1e2761;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s;
+    }
+
+    #start-button:hover {
+      background-color: #35458c;
+    }
+
+    #countdown {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #2e3c6d;
+      margin-top: 20px;
+    }
+
+    #tagline {
+      font-size: 1.3rem;
+      margin-top: 10px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <section id="start-section">
+    <h1>Welcome to SpellRace!</h1>
+    <p id="tagline">Do you know your computer terms?</p>
+    <button id="start-button">Start</button>
+    <div id="countdown"></div>
+  </section>
+
+  <script>
+    const startBtn = document.getElementById("start-button");
+    const countdownEl = document.getElementById("countdown");
+
+    startBtn.addEventListener("click", () => {
+      startBtn.style.display = "none";
+      let count = 3;
+      countdownEl.textContent = count;
+
+      const interval = setInterval(() => {
+        count--;
+        if (count > 0) {
+          countdownEl.textContent = count;
+        } else {
+          clearInterval(interval);
+          countdownEl.textContent = "Go!";
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 300);
+        }
+      }, 700); // Faster than 1 second (700ms each count)
+    });
+  </script>
+</body>
+</html>

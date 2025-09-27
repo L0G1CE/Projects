@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SpellRace Lobby</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    #lobby-container {
+      max-width: 500px;
+      margin: auto;
+      margin-top: 80px;
+      padding: 30px;
+      background-color: white;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      color: #1e2761;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 1rem;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #1e2761;
+      color: white;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #35458c;
+    }
+
+    #room-info {
+      margin-top: 20px;
+      display: none;
+      text-align: left;
+    }
+
+    #room-info ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 10px;
+    }
+
+    #room-info li {
+      background-color: #f0f4ff;
+      padding: 8px;
+      margin-bottom: 5px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div id="lobby-container">
+    <h2><img src="assets/images/AWS_logo.jpg" alt="SpellRace Logo" class="logo-icon"> Welcome to the SpellRace Lobby</h2>
+    <p id="welcome-text">Hello, Player!</p>
+
+    <div>
+      <button onclick="startSinglePlayer()">🧍 Play Solo</button>
+      <button onclick="startMultiplayer()">👥 Matchmaking</button>
+      <button onclick="logout()">🚪 Logout</button>
+    </div>
+
+    <div id="room-info">
+      <h3>👥 Players in Room</h3>
+      <ul id="players-list"></ul>
+      <p><strong>Status:</strong> <span id="room-status">Waiting...</span></p>
+    </div>
+  </div>
+
+  <!-- Firebase + Logic will go here -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjGp85dliV4ZSngoXIyl_cGp-CQvHJ0vU",
+      authDomain: "spellrace-7b2d6.firebaseapp.com",
+      databaseURL: "https://spellrace-7b2d6-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "spellrace-7b2d6",
+      storageBucket: "spellrace-7b2d6.appspot.com",
+      messagingSenderId: "744777480191",
+      appId: "1:744777480191:web:c2f31361ffc98ed2e159ca"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const username = localStorage.getItem("spellraceUser");
+    if (!username) window.location.href = "login.html";
+    document.getElementById("welcome-text").textContent = `Hello, ${username}!`;
+
+    function startSinglePlayer() {
+      localStorage.setItem("gameMode", "solo");
+      window.location.href = "start.html";
+    }
+
+    function startMultiplayer() {
+      localStorage.setItem("gameMode", "multiplayer");
+      window.location.href = "matchmaking.html";
+    }
+    
+    function logout() {
+      localStorage.removeItem("spellraceUser");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>

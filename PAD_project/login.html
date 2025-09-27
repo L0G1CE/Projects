@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - SpellRace</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+    #login-container {
+      max-width: 400px;
+      background: white;
+      padding: 20px;
+      margin: auto;
+      margin-top: 100px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    #login-container input {
+      width: 80%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+    }
+    #login-container button {
+      padding: 10px 20px;
+      background-color: #1e2761;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    #login-container button:hover {
+      background-color: #35458c;
+    }
+    #error-message {
+      color: red;
+      margin-top: 10px;
+      min-height: 20px;
+    }
+    .logo-icon {
+      max-height: 50px;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div id="login-container">
+    <h2>
+      <img src="assets/images/AWS_logo.jpg" alt="SpellRace Logo" class="logo-icon">
+      Welcome to SpellRace 🏁
+    </h2>
+    <form id="login-form">
+      <input type="text" id="username-input" placeholder="Enter your name" required />
+      <br/>
+      <button type="submit">Enter</button>
+    </form>
+    <p id="error-message"></p>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjGp85dliV4ZSngoXIyl_cGp-CQvHJ0vU",
+      authDomain: "spellrace-7b2d6.firebaseapp.com",
+      databaseURL: "https://spellrace-7b2d6-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "spellrace-7b2d6",
+      storageBucket: "spellrace-7b2d6.appspot.com",
+      messagingSenderId: "744777480191",
+      appId: "1:744777480191:web:c2f31361ffc98ed2e159ca"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    document.getElementById("login-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      await enterGame();
+    });
+
+    async function enterGame() {
+      const usernameInput = document.getElementById("username-input");
+      const username = usernameInput.value.trim().toLowerCase();
+      const errorEl = document.getElementById("error-message");
+      errorEl.textContent = "";
+
+      if (!username) {
+        errorEl.textContent = "Please enter a name.";
+        return;
+      }
+
+      try {
+        const userRef = db.ref("activeUsers/" + username);
+        const snapshot = await userRef.once("value");
+
+        if (snapshot.exists()) {
+          errorEl.textContent = "Name already in use. Try another.";
+          return;
+        }
+
+        localStorage.setItem("spellraceUser", username);
+        await userRef.set(true);
+        userRef.onDisconnect().remove();
+
+        window.location.href = "lobby.html";
+      } catch (err) {
+        console.error("Firebase error:", err);
+        errorEl.textContent = "Error connecting to server. Please try again.";
+      }
+    }
+  </script>
+</body>
+</html>

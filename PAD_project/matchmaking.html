@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Matchmaking - SpellRace</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    #matchmaking-container {
+      max-width: 500px;
+      margin: auto;
+      margin-top: 80px;
+      padding: 30px;
+      background-color: white;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background-color: #f0f4ff;
+      padding: 8px;
+      margin-bottom: 5px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    .btn {
+      margin-top: 15px;
+      margin-right: 10px;
+      padding: 10px 20px;
+      background-color: #1e2761;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn:hover {
+      background-color: #35458c;
+    }
+    .btn:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+    #room-status {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+<div id="matchmaking-container">
+  <h2>👥 Matchmaking Lobby</h2>
+  <p id="player-room">Player: ...</p>
+
+  <h3>👤 Players in Room</h3>
+  <ul id="players-list"></ul>
+
+  <div id="button-group" style="margin-top: 20px;">
+    <button id="ready-btn" class="btn" onclick="markReady()">✅ Ready</button>
+    <button id="lobby-btn" class="btn" onclick="goToLobby()">🏠 Return to Lobby</button>
+  </div>
+
+  <p id="room-status">Waiting for players to ready up...</p>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCjGp85dliV4ZSngoXIyl_cGp-CQvHJ0vU",
+    authDomain: "spellrace-7b2d6.firebaseapp.com",
+    databaseURL: "https://spellrace-7b2d6-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "spellrace-7b2d6",
+    storageBucket: "spellrace-7b2d6.appspot.com",
+    messagingSenderId: "744777480191",
+    appId: "1:744777480191:web:c2f31361ffc98ed2e159ca"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const username = localStorage.getItem("spellraceUser");
+  if (!username) window.location.href = "login.html";
+
+  const roomId = "room1";
+  document.getElementById("player-room").textContent = `Player: ${username}`;
+
+  const playerRef = db.ref(`lobbies/${roomId}/players/${username}`);
+  playerRef.set({ score: 0 });
+  playerRef.onDisconnect().remove();
+  db.ref(`lobbies/${roomId}/ready/${username}`).onDisconnect().remove();
+
+  // Display player list
+  db.ref(`lobbies/${roomId}/players`).on("value", (snapshot) => {
+    const playersList = document.getElementById("players-list");
+    playersList.innerHTML = "";
+    snapshot.forEach((child) => {
+      const li = document.createElement("li");
+      li.textContent = child.key;
+      playersList.appendChild(li);
+    });
+  });
+
+  // Mark player as ready
+  function markReady() {
+    db.ref(`lobbies/${roomId}/ready/${username}`).set(true);
+    const btn = document.getElementById("ready-btn");
+    btn.disabled = true;
+    btn.textContent = "✅ Ready (Waiting...)";
+  }
+
+  // Leave matchmaking
+  function goToLobby() {
+    db.ref(`lobbies/${roomId}/players/${username}`).remove();
+    db.ref(`lobbies/${roomId}/ready/${username}`).remove();
+    window.location.href = "lobby.html";
+  }
+
+  // Check if all players are ready
+  db.ref(`lobbies/${roomId}/ready`).on("value", async (snapshot) => {
+    const readyPlayers = snapshot.val() || {};
+    const playersSnap = await db.ref(`lobbies/${roomId}/players`).once("value");
+    const allReady = Object.keys(readyPlayers).length > 0 &&
+                     playersSnap.numChildren() === Object.keys(readyPlayers).length;
+
+    const gameStatusSnap = await db.ref(`lobbies/${roomId}/status`).once("value");
+    if (allReady && gameStatusSnap.val() !== "started") {
+      db.ref(`lobbies/${roomId}/status`).set("started");
+    }
+  });
+
+  // Go to game only if this user is marked ready
+  db.ref(`lobbies/${roomId}/status`).on("value", async (snapshot) => {
+    const status = snapshot.val();
+    if (status === "started") {
+      const readySnap = await db.ref(`lobbies/${roomId}/ready/${username}`).once("value");
+      if (readySnap.exists()) {
+        localStorage.setItem("matchmakingRoom", roomId);
+        localStorage.setItem("gameMode", "multiplayer");
+        window.location.href = "multiplayer.html";
+      }
+    }
+  });
+</script>
+</body>
+</html>

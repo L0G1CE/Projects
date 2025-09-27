@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SpellRace - Educational Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1><img src="assets/images/AWS_logo.jpg" alt="SpellRace Logo" style="height: 70px; vertical-align: middle; margin-right: 8px;"> SpellRace</h1>
+    <p>Race against time and sharpen your spelling skills!</p>
+  </header>
+
+  <main>
+    <section id="game-info">
+      <div id="user-info">
+        <span id="username">Player: Guest</span>
+      </div>
+      <div id="scoreboard">
+        <span>Score: <strong id="score">0</strong></span>
+        <span>Time Left: <strong id="timer">30</strong> sec</span>
+        <span>Level: <strong id="level">Easy</strong></span>
+      </div>
+    </section>
+
+    <section id="game-area">
+      <div id="scrambled-word">_ _ _ _</div>
+
+      <form id="answer-form">
+        <input type="text" id="user-input" placeholder="Type your answer..." autocomplete="off" required />
+        <button type="submit">Submit</button>
+      </form>
+      
+      <div id="restart-container" style="display: none; text-align: center; margin-top: 20px;">
+        <br/>
+        <button onclick="goBackToLobby()" id="back-button" style="margin-top:10px;">⬅️ Back to Lobby</button>
+        <button id="restart-button">🔄 Restart Game</button>
+      </div>
+
+      <div id="feedback"></div>
+    </section>
+
+    <section id="history">
+      <h3>🕒 Last Results</h3>
+      <ul id="history-list"></ul>
+    </section>
+
+    <!-- 🏆 Leaderboard -->
+    <section id="players" style="margin-top: 30px;">
+      <h3></h3>
+      <ul id="players-list"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 SpellRace. Built for educational purposes.</p>
+  </footer>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjGp85dliV4ZSngoXIyl_cGp-CQvHJ0vU",
+      authDomain: "spellrace-7b2d6.firebaseapp.com",
+      databaseURL: "https://spellrace-7b2d6-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "spellrace-7b2d6",
+      storageBucket: "spellrace-7b2d6.appspot.com",
+      messagingSenderId: "744777480191",
+      appId: "1:744777480191:web:c2f31361ffc98ed2e159ca",
+      measurementId: "G-68M4WWC1WY"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
+
+  <!-- Main script -->
+  <script src="script.js"></script>
+
+  <!-- Check for login -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const user = localStorage.getItem("spellraceUser");
+      if (!user) {
+        window.location.href = "login.html";
+      } else {
+        document.getElementById("username").textContent = "Player: " + user;
+      }
+    });
+  </script>
+</body>
+</html>
