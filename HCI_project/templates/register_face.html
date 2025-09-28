@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}CheckMate - Register Face{% endblock %}
+
+{% block content %}
+<section>
+    <h2><i class="fas fa-id-card"></i> Register Face</h2>
+    <p>Follow the instructions below to register your facial data for attendance tracking.</p>
+
+    <div class="card">
+        <div class="camera-container">
+            <img src="{{ url_for('video_feed') }}" alt="Video Feed">
+        </div>
+
+        <div class="instructions">
+            <p><i class="fas fa-lightbulb"></i> Please follow these guidelines for the best results:</p>
+            <ul>
+                <li><i class="fas fa-sun"></i> Ensure good lighting on your face</li>
+                <li><i class="fas fa-glasses"></i> Remove glasses if possible</li>
+                <li><i class="fas fa-arrows-alt"></i> Look directly at the camera</li>
+                <li><i class="fas fa-sync"></i> Slowly move your head slightly to capture different angles</li>
+            </ul>
+        </div>
+
+        <div id="captureProgress" class="recognition-result">
+            <p>Click the button below to start face registration.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('process_face_registration', user_id=user_id) }}" onsubmit="return showProgress()">
+            <input type="hidden" name="user_id" value="{{ user_id }}">
+            <div class="actions">
+                <button type="submit" id="captureBtn" class="button">
+                    <i class="fas fa-camera"></i> Capture Face Data
+                </button>
+                <a href="/profile" class="button button-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Profiles
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showProgress() {
+    const btn = document.getElementById('captureBtn');
+    const progressElement = document.getElementById('captureProgress');
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Capturing...';
+    progressElement.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Processing face data, please wait...</p>';
+    return true;  // Allow form to submit
+}
+</script>
+{% endblock %}

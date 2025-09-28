@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}CheckMate - Profile{% endblock %}
+
+{% block content %}
+<section>
+    <h2><i class="fas fa-user-circle"></i> User Profiles</h2>
+    <p>Manage user accounts and register facial data for attendance tracking.</p>
+    
+    <div class="card">
+        <h3><i class="fas fa-user-plus"></i> Add New User</h3>
+        <form method="POST" action="/register_user">
+            <div class="form-group">
+                <label for="name"><i class="fas fa-user"></i> Name:</label>
+                <input type="text" id="name" name="name" required placeholder="Enter full name">
+            </div>
+            
+            <div class="form-group">
+                <label for="email"><i class="fas fa-envelope"></i> Email:</label>
+                <input type="email" id="email" name="email" required placeholder="Enter email address">
+            </div>
+            
+            <div class="form-group">
+                <label for="role"><i class="fas fa-briefcase"></i> Role:</label>
+                <select id="role" name="role">
+                    <option value="employee">Employee</option>
+                    <option value="student">Student</option>
+                    <option value="visitor">Visitor</option>
+                    <option value="admin">Administrator</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="button"><i class="fas fa-save"></i> Register User</button>
+        </form>
+    </div>
+    
+    <div class="users-list">
+        <h3><i class="fas fa-users"></i> Registered Users</h3>
+        
+        <div class="card">
+            {% if users %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Face Data</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% if user.has_face_data %}
+                            <span class="success"><i class="fas fa-check-circle"></i> Registered</span>
+                            {% else %}
+                            <span class="error"><i class="fas fa-times-circle"></i> Not Registered</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <img src="{{ url_for('static', filename='qrcodes/' ~ user.id ~ '.png') }}" alt="QR Code" width="64" height="64">
+                        </td>
+                        <td>
+                            <a href="/register_face_page/{{ user.id }}" class="button button-outline">
+                                <i class="fas fa-camera"></i> Register Face
+                            </a>
+                            <form method="POST" action="/delete_user/{{ user.id }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                <button type="submit" class="button button-danger">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="instructions">
+                <p><i class="fas fa-info-circle"></i> No users have been registered yet. Add a new user above.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

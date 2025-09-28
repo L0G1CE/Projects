@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}CheckMate - Home{% endblock %}
+
+{% block content %}
+<section class="welcome-card">
+    <h2>Welcome to CheckMate</h2>
+    <p>A modern, secure, and convenient way to track attendance using facial recognition technology.</p>
+    
+    <div class="actions">
+        <a href="/scan" class="button"><i class="fas fa-camera"></i> Scan Face</a>
+        <a href="/profile" class="button button-outline"><i class="fas fa-user-plus"></i> Manage Profiles</a>
+        <a href="/history" class="button button-outline"><i class="fas fa-history"></i> View History</a>
+    </div>
+</section>
+
+<section>
+    <h2>How It Works</h2>
+    
+    <div class="welcome-features">
+        <div class="feature-card card">
+            <div class="feature-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <h3>Register</h3>
+            <p>Create a user profile and register your face with our secure system.</p>
+        </div>
+        
+        <div class="feature-card card">
+            <div class="feature-icon">
+                <i class="fas fa-camera"></i>
+            </div>
+            <h3>Scan</h3>
+            <p>Scan your face to quickly log your attendance without physical contact.</p>
+        </div>
+        
+        <div class="feature-card card">
+            <div class="feature-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h3>Track</h3>
+            <p>View comprehensive reports and attendance history at any time.</p>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Key Benefits</h2>
+    
+    <div class="card">
+        <h3><i class="fas fa-shield-alt"></i> Secure & Reliable</h3>
+        <p>Our face recognition technology uses secure neural networks to ensure accurate identification while protecting your privacy.</p>
+    </div>
+    
+    <div class="card">
+        <h3><i class="fas fa-clock"></i> Time-Saving</h3>
+        <p>No more time cards or manual sign-in sheets. Just a quick face scan to record your attendance.</p>
+    </div>
+    
+    <div class="card">
+        <h3><i class="fas fa-chart-bar"></i> Comprehensive Reporting</h3>
+        <p>Access detailed attendance reports and analytics to better manage your team or classroom.</p>
+    </div>
+</section>
+{% endblock %}

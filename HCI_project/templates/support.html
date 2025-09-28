@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}CheckMate - Support{% endblock %}
+
+{% block content %}
+<section>
+    <h2><i class="fas fa-question-circle"></i> Support</h2>
+    <p>Get help with using the Face Attendance System or report any issues you encounter.</p>
+    
+    <div class="card">
+        <h3><i class="fas fa-info-circle"></i> Frequently Asked Questions</h3>
+        
+        <div class="faq-item">
+            <h4><i class="fas fa-user-plus"></i> How do I register a new user?</h4>
+            <p>Go to the Profile page, fill out the form with name and email, then follow the prompts to register the user's face.</p>
+        </div>
+        
+        <div class="faq-item">
+            <h4><i class="fas fa-camera"></i> How does the face scanning work?</h4>
+            <p>The system uses advanced machine learning with TensorFlow to detect and recognize faces. Users need to look at the camera on the Scan page to log their attendance. The system matches the detected face with registered face data in the database.</p>
+        </div>
+        
+        <div class="faq-item">
+            <h4><i class="fas fa-exclamation-triangle"></i> What if the system doesn't recognize my face?</h4>
+            <p>Try these troubleshooting steps:</p>
+            <ul>
+                <li>Ensure you are in a well-lit environment</li>
+                <li>Remove glasses, hats, or other face coverings</li>
+                <li>Position your face directly in front of the camera</li>
+                <li>Try re-registering your face in the Profile section</li>
+                <li>Make sure your user profile is correctly set up</li>
+            </ul>
+        </div>
+        
+        <div class="faq-item">
+            <h4><i class="fas fa-shield-alt"></i> Is my facial data secure?</h4>
+            <p>Yes, we take security very seriously. Your facial data is encrypted and stored securely. The system only stores mathematical representations of facial features, not actual images, and all data is kept on secure servers with restricted access.</p>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2><i class="fas fa-envelope"></i> Contact Support</h2>
+    <p>Need additional help? Send us a message and we'll get back to you as soon as possible.</p>
+    
+    <div class="card">
+        <form id="supportForm">
+            <div class="form-group">
+                <label for="name"><i class="fas fa-user"></i> Name:</label>
+                <input type="text" id="name" name="name" required placeholder="Your name">
+            </div>
+            
+            <div class="form-group">
+                <label for="email"><i class="fas fa-envelope"></i> Email:</label>
+                <input type="email" id="email" name="email" required placeholder="Your email address">
+            </div>
+            
+            <div class="form-group">
+                <label for="issue"><i class="fas fa-tag"></i> Issue Type:</label>
+                <select id="issue" name="issue">
+                    <option value="face_detection">Face Detection Problem</option>
+                    <option value="registration">Registration Problem</option>
+                    <option value="attendance">Attendance Logging Problem</option>
+                    <option value="account">Account Management</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="message"><i class="fas fa-comment"></i> Message:</label>
+                <textarea id="message" name="message" rows="5" required placeholder="Describe your issue in detail..."></textarea>
+            </div>
+            
+            <button type="submit" class="button"><i class="fas fa-paper-plane"></i> Send Message</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('supportForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Show sending feedback
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        submitButton.disabled = true;
+        
+        // Simulate sending (in a real application, this would be an actual AJAX call)
+        setTimeout(() => {
+            // Show success message
+            const formElement = this;
+            const successMessage = document.createElement('div');
+            successMessage.className = 'flash success';
+            successMessage.innerHTML = '<i class="fas fa-check-circle"></i> Support request submitted successfully. We will contact you soon.';
+            
+            formElement.parentNode.insertBefore(successMessage, formElement);
+            formElement.reset();
+            
+            // Restore button
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
+            
+            // Auto-hide message after some time
+            setTimeout(() => {
+                successMessage.style.opacity = '0';
+                successMessage.style.transition = 'opacity 0.5s';
+                setTimeout(() => successMessage.remove(), 500);
+            }, 5000);
+            
+        }, 1500);
+    });
+</script>
+{% endblock %}

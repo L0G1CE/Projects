@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Face Attendance System{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="brand">
+                <i class="fas fa-id-card-alt fa-2x"></i>
+                <h1>CheckMate</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/" {% if request.path == '/' %}class="active"{% endif %}><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="/scan" {% if request.path == '/scan' %}class="active"{% endif %}><i class="fas fa-camera"></i> Scan</a></li>
+                    <li><a href="/history" {% if request.path == '/history' %}class="active"{% endif %}><i class="fas fa-history"></i> History</a></li>
+                    <li><a href="/profile" {% if request.path == '/profile' %}class="active"{% endif %}><i class="fas fa-user-circle"></i> Profile</a></li>
+                    <li><a href="/support" {% if request.path == '/support' %}class="active"{% endif %}><i class="fas fa-question-circle"></i> Support</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flashes">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Face Attendance System | <i class="fas fa-shield-alt"></i> Secure & Privacy-Focused</p>
+    </footer>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

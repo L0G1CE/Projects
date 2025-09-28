@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}CheckMate - Scan{% endblock %}
+
+{% block content %}
+<section>
+    <h2><i class="fas fa-camera"></i> Face Scan</h2>
+    <p>Position your face in front of the camera and ensure good lighting for accurate recognition.</p>
+    
+    <div class="card">
+        <div class="camera-container">
+            <img src="{{ url_for('video_feed') }}" alt="Video Feed">
+        </div>
+        
+        <div class="instructions">
+            <p><i class="fas fa-info-circle"></i> Tips for better recognition:</p>
+            <ul>
+                <li>Ensure your face is well-lit</li>
+                <li>Look directly at the camera</li>
+                <li>Remove hats or sunglasses</li>
+                <li>Keep still while scanning</li>
+            </ul>
+        </div>
+        
+        <div class="recognition-result" id="recognitionResult">
+            <p>Waiting for face detection...</p>
+        </div>
+        
+        <div class="attendance-buttons">
+            <form id="attendanceForm" method="POST" action="/log_attendance">
+                <input type="hidden" id="userId" name="user_id" value="">
+                <div class="actions">
+                    <button type="submit" name="log_type" value="IN" id="timeInBtn" disabled class="button">
+                        <i class="fas fa-sign-in-alt"></i> Time In
+                    </button>
+                    <button type="submit" name="log_type" value="OUT" id="timeOutBtn" disabled class="button button-accent">
+                        <i class="fas fa-sign-out-alt"></i> Time Out
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let scanInterval = null;
+    let recognized = false;
+
+    function checkFace() {
+        if (recognized) return; // Stop if already recognized
+
+        document.getElementById('recognitionResult').innerHTML = 
+            `<p><i class="fas fa-spinner fa-spin"></i> Scanning...</p>`;
+
+        fetch('/api/scan_face', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'recognized') {
+                recognized = true; // Prevent further scanning
+                clearInterval(scanInterval); // Stop interval
+
+                document.getElementById('recognitionResult').innerHTML = 
+                    `<p class="recognition-success"><i class="fas fa-check-circle"></i> Recognized: <strong>${data.name}</strong></p>`;
+                document.getElementById('userId').value = data.user_id;
+                document.getElementById('timeInBtn').disabled = false;
+                document.getElementById('timeOutBtn').disabled = false;
+            } else {
+                document.getElementById('recognitionResult').innerHTML = 
+                    `<p class="recognition-error"><i class="fas fa-times-circle"></i> Not recognized. Please try again.</p>`;
+                document.getElementById('userId').value = '';
+                document.getElementById('timeInBtn').disabled = true;
+                document.getElementById('timeOutBtn').disabled = true;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('recognitionResult').innerHTML = 
+                `<p class="recognition-error"><i class="fas fa-exclamation-triangle"></i> Error connecting to recognition service.</p>`;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        scanInterval = setInterval(checkFace, 3000);
+        checkFace(); // Initial call
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}CheckMate - History{% endblock %}
+
+{% block content %}
+<section>
+    <h2><i class="fas fa-history"></i> Attendance History</h2>
+    <p>View and filter attendance records by date and user.</p>
+    
+    <div class="filter-controls">
+        <form method="GET" action="/history">
+            <div class="form-group">
+                <label for="dateFilter"><i class="fas fa-calendar"></i> Date:</label>
+                <input type="date" id="dateFilter" name="date" value="{{ request.args.get('date', '') }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="userFilter"><i class="fas fa-user"></i> User:</label>
+                <select id="userFilter" name="user_id">
+                    <option value="">All Users</option>
+                    {% for user in users %}
+                    <option value="{{ user.id }}" {% if request.args.get('user_id') == user.id|string %}selected{% endif %}>{{ user.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit" class="button"><i class="fas fa-filter"></i> Filter</button>
+        </form>
+    </div>
+    
+    <div class="card">
+        {% if logs %}
+        <table class="attendance-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.id }}</td>
+                    <td>{{ log.name }}</td>
+                    <td>
+                        {% if log.log_type == 'IN' %}
+                        <span class="success"><i class="fas fa-sign-in-alt"></i> Clock In</span>
+                        {% else %}
+                        <span class="error"><i class="fas fa-sign-out-alt"></i> Clock Out</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ log.timestamp.split(' ')[0] }}</td>
+                    <td>{{ log.timestamp.split(' ')[1].split('.')[0] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="instructions">
+            <p><i class="fas fa-info-circle"></i> No attendance records found for the selected filters.</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="actions">
+        <a href="#" class="button button-outline" onclick="window.print()"><i class="fas fa-print"></i> Print Report</a>
+        <a href="/export_csv" class="button button-outline"><i class="fas fa-file-csv"></i> Export CSV</a>
+    </div>
+</section>
+{% endblock %}
