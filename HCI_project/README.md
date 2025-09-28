@@ -103,4 +103,5 @@ python app.py
 
 ## 👨‍💻 Contributors
 - Jericho Lampano (Project Lead, Developer)
-- [Add other contributors here]
+- Paul Mandap (Project Planner, Developer)
+- Jesse Rey Isidro (Project Designer, Developer)
